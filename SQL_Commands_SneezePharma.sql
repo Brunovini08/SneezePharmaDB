@@ -1,28 +1,31 @@
 CREATE DATABASE SneezePharma
+GO
+
 USE SneezePharma
+GO
 
 CREATE TABLE Situation(
-	IDSituacao int IDENTITY(1,1),
-	TipoSituacao VARCHAR(50)
+	IDSituacao int NOT NULL PRIMARY KEY IDENTITY(1,1),
+	TipoSituacao VARCHAR(50) UNIQUE
 )
 
 CREATE TABLE Customers(
-	IDCliente INT IDENTITY(1,1),
+	IDCliente INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 	CPF NUMERIC NOT NULL UNIQUE,
 	Nome VARCHAR(50) NOT NULL,
 	DataNascimento DATE NOT NULL,
-	UltimaCompra DATE,
-	DataCadastro TIMESTAMP NOT NULL,
+	UltimaCompra DATETIME,
+	DataCadastro DATETIME DEFAULT GETDATE(),
 	IDSituacao INT NOT NULL
 )
 
 CREATE TABLE RestrictedCustomers(
-	IDClienteRestrito INT IDENTITY(1,1),
+	IDClienteRestrito INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 	IDCliente INT NOT NULL
 )
 
 CREATE TABLE Phones(
-	IDTelefone INT IDENTITY(1,1),
+	IDTelefone INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 	CodPais NUMERIC NOT NULL,
 	DDD NUMERIC NOT NULL,
 	Numero NUMERIC NOT NULL,
@@ -30,16 +33,128 @@ CREATE TABLE Phones(
 )
 
 CREATE TABLE Suppliers(
-	IDFornecedor INT IDENTITY(1,1),
-	CNPJ VARCHAR(14) NOT NULL,
+	IDFornecedor INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	CNPJ VARCHAR(14) NOT NULL UNIQUE,
 	RazaoSocial VARCHAR(50) NOT NULL,
 	Pais VARCHAR(40) NOT NULL,
 	DataAbertura DATE NOT NULL,
 	UltimoFornecimento DATETIME,
-	DataCadastro TIMESTAMP NOT NULL
+	DataCadastro DATETIME DEFAULT GETDATE(),
+	IDSituacao INT NOT NULL
 )
 
 CREATE TABLE RestrictedSuppliers(
-	IDFornecedorRestrito INT IDENTITY(1,1),
+	IDFornecedorRestrito INT NOT NULL PRIMARY KEY IDENTITY(1,1),
 	IDFornecedor INT NOT NULL
 )
+
+CREATE TABLE Sales(
+	IDVenda INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	DataVenda DATETIME DEFAULT GETDATE(),
+	IDCliente INT NOT NULL,
+	ValorTotal DECIMAL(15,2),
+);
+
+CREATE TABLE SalesItems(
+	IDItemVenda INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	IDVenda INT NOT NULL,
+	CDB VARCHAR(13) NOT NULL,
+	Quantidade INT NOT NULL,
+	TotalItem DECIMAL (15,2)
+);
+
+CREATE TABLE Purchases(
+	IDCompra INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	IDFornecedor INT NOT NULL,
+	DataCompra DATETIME DEFAULT GETDATE(),
+	ValorTotal DECIMAL(15,2)
+);
+
+CREATE TABLE PurchaseItem(
+	IDItemCompra INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	IDCompra INT NOT NULL,
+	IDIngrediente INT NOT NULL,
+	Quantidade INT NOT NULL,
+	ValorUnitario DECIMAL(8,2) NOT NULL,
+	TotalItem DECIMAL(15,2)
+);
+
+CREATE TABLE Ingredients(
+	IDIngrediente INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	Nome VARCHAR(50) NOT NULL,
+	UltimaCompra DATETIME,
+	DataCadastro DATETIME DEFAULT GETDATE(),
+	IDSituacao INT NOT NULL
+);
+
+CREATE Table Category(
+	IDCategoria INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	Categoria VARCHAR(30) NOT NULL UNIQUE
+);
+
+CREATE TABLE Medicine(
+	CDB VARCHAR(13) NOT NULL PRIMARY KEY,
+	Nome VARCHAR(50) NOT NULL,
+	IDCategoria INT NOT NULL,
+	ValorVenda DECIMAL(8,2) NOT NULL,
+	UltimaVenda DATETIME,
+	DataCadastro DATETIME DEFAULT GETDATE(),
+	IDSituacao INT NOT NULL
+);
+
+CREATE TABLE Produce(
+	IDProducao INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	DataProducao DATETIME DEFAULT GETDATE(),
+	CDB VARCHAR(13) NOT NULL,
+	Quantidade INT NOT NULL,
+);
+
+CREATE TABLE ProduceItem(
+	IDItemProducao INT NOT NULL PRIMARY KEY IDENTITY(1,1),
+	IDProducao INT NOT NULL,
+	IDIngrediente INT NOT NULL,
+	QuantidadePrincipio NUMERIC NOT NULL
+);
+
+ALTER TABLE Customers
+ADD FOREIGN KEY (IDSituacao) REFERENCES Situation (IDSituacao)
+
+ALTER TABLE RestrictedCustomers
+ADD FOREIGN KEY (IDCliente) REFERENCES Customers (IDCliente)
+
+ALTER TABLE Phones
+ADD FOREIGN KEY (IDCliente) REFERENCES Customers (IDCliente)
+
+ALTER TABLE Suppliers
+ADD FOREIGN KEY (IDSituacao) REFERENCES Situation (IDSituacao)
+
+ALTER TABLE RestrictedSuppliers
+ADD FOREIGN KEY (IDFornecedor) REFERENCES Suppliers (IDFornecedor)
+
+ALTER TABLE Sales
+ADD FOREIGN KEY (IDCliente) REFERENCES Customers (IDCliente)
+
+ALTER TABLE SalesItems
+ADD FOREIGN KEY (IDVenda) REFERENCES Sales (IDVenda),
+FOREIGN KEY (CDB) REFERENCES Medicine (CDB)
+
+ALTER TABLE Purchases
+ADD FOREIGN KEY (IDFornecedor) REFERENCES Suppliers (IDFornecedor)
+
+ALTER TABLE PurchaseItem
+ADD FOREIGN KEY (IDCompra) REFERENCES Purchases (IDCompra),
+FOREIGN KEY (IDIngrediente) REFERENCES Ingredients (IDIngrediente)
+
+ALTER TABLE Ingredients
+ADD FOREIGN KEY (IDSituacao) REFERENCES Situation (IDSituacao)
+
+ALTER TABLE Medicine
+ADD FOREIGN KEY (IDSituacao) REFERENCES Situation (IDSituacao),
+FOREIGN KEY (IDCategoria) REFERENCES Category (IDCategoria)
+
+ALTER TABLE Produce
+ADD FOREIGN KEY (CDB) REFERENCES Medicine (CDB)
+
+ALTER TABLE ProduceItem
+ADD FOREIGN KEY (IDProducao) REFERENCES Produce (IDProducao),
+FOREIGN KEY (IDIngrediente) REFERENCES Ingredients (IDIngrediente)
