@@ -164,4 +164,3 @@ INNER JOIN Sales s ON c.IDCliente = s.IDCliente
 WHERE s.DataVenda BETWEEN '2025-01-01' AND '2025-12-31'
 GROUP BY c.Nome
 ORDER BY TotalVendido DESC;
-
