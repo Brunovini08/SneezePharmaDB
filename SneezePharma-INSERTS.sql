@@ -155,9 +155,6 @@ INSERT INTO Sales (IDCliente) VALUES
 
 -- Inserindo Item da Venda
 
-SELECT * FROM Sales
-SELECT * FROM SalesItems
-
 INSERT INTO SalesItems(IDVenda, CDB, Quantidade) VALUES
 (1, '7891000055123', 1)
 
@@ -182,19 +179,10 @@ INSERT INTO SalesItems(IDVenda, CDB, Quantidade) VALUES
 INSERT INTO SalesItems(IDVenda, CDB, Quantidade) VALUES
 (5, '7891910000197', 1)
 
-INSERT INTO SalesItems(IDVenda, CDB, Quantidade) VALUES
-(5, '7891234567895', 1)
-
 -- Inserindo Compra
 
 INSERT INTO Purchases (IDFornecedor) VALUES
 (1)
-
-INSERT INTO Purchases (IDFornecedor) VALUES
-(2)
-
-INSERT INTO Purchases (IDFornecedor) VALUES
-(3)
 
 INSERT INTO Purchases (IDFornecedor) VALUES
 (2)
@@ -208,7 +196,7 @@ INSERT INTO PurchaseItem (IDCompra, IDIngrediente, Quantidade, ValorUnitario) VA
 (1, 1, 50, 10)
 
 INSERT INTO PurchaseItem (IDCompra, IDIngrediente, Quantidade, ValorUnitario) VALUES
-(1, 3, 70, 10)
+(1, 3, 63, 10)
 
 INSERT INTO PurchaseItem (IDCompra, IDIngrediente, Quantidade, ValorUnitario) VALUES
 (1, 4, 60, 10)
@@ -217,4 +205,7 @@ INSERT INTO PurchaseItem (IDCompra, IDIngrediente, Quantidade, ValorUnitario) VA
 (2, 4, 40, 10)
 
 INSERT INTO PurchaseItem (IDCompra, IDIngrediente, Quantidade, ValorUnitario) VALUES
-(4, 3, 55, 10)
+(2, 3, 55, 10)
+
+INSERT INTO PurchaseItem (IDCompra, IDIngrediente, Quantidade, ValorUnitario) VALUES
+(3, 3, 55, 10)
