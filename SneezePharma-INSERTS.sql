@@ -1,6 +1,6 @@
 USE SneezePharma
 
---Inserindo SituaÁıes
+--Inserindo Situa√ß√µes
 
 INSERT INTO Situation VALUES
 ('ATIVO'),
@@ -9,11 +9,11 @@ INSERT INTO Situation VALUES
 --Inserindo Categoria
 
 INSERT INTO Category VALUES
-('GenÈricos'),
+('Gen√©ricos'),
 ('Manipulados'),
-('Homeop·ticos')
+('Homeop√°ticos')
 
---Inserindo PrincÌpio Ativos
+--Inserindo Princ√≠pio Ativos
 
 INSERT INTO Ingredients (Nome, IDSituacao) VALUES
 ('Colecalciferol', 1)
@@ -33,7 +33,7 @@ INSERT INTO Ingredients (Nome, IDSituacao) VALUES
 --Inserindo Clientes
 
 INSERT INTO Customers(CPF, Nome, DataNascimento, IDSituacao) VALUES
-(00057459002, 'JosÈ Aldo', '1995-10-04', 1)
+(00057459002, 'Jos√© Aldo', '1995-10-04', 1)
 
 INSERT INTO Customers(CPF, Nome, DataNascimento, IDSituacao) VALUES
 (20793716063, 'Guilherme', '2000-11-01', 1)
@@ -42,7 +42,7 @@ INSERT INTO Customers(CPF, Nome, DataNascimento, IDSituacao) VALUES
 (17654772041, 'Gustavo', '2001-04-13', 1)
 
 INSERT INTO Customers(CPF, Nome, DataNascimento, IDSituacao) VALUES
-(47998764813, 'Bruno VinÌcius', '2005-11-08', 1)
+(47998764813, 'Bruno Vin√≠cius', '2005-11-08', 1)
 
 INSERT INTO Customers(CPF, Nome, DataNascimento, IDSituacao) VALUES
 (94603488076, 'Jefferson Nascimento', '1997-03-10', 1)
@@ -65,13 +65,13 @@ INSERT INTO Phones(CodPais, DDD, Numero, IDCliente) VALUES
 --Inserindo Fornecedores
 
 INSERT INTO Suppliers(CNPJ, RazaoSocial, Pais, DataAbertura, IDSituacao) VALUES
-(63504773000125, 'Nortec QuÌmica', 'Brasil', '1980-01-14', 1)
+(63504773000125, 'Nortec Qu√≠mica', 'Brasil', '1980-01-14', 1)
 
 INSERT INTO Suppliers(CNPJ, RazaoSocial, Pais, DataAbertura, IDSituacao) VALUES
-(10728943000199, 'Crist·lia', 'Brasil', '2000-10-03', 1)
+(10728943000199, 'Crist√°lia', 'Brasil', '2000-10-03', 1)
 
 INSERT INTO Suppliers(CNPJ, RazaoSocial, Pais, DataAbertura, IDSituacao) VALUES
-(97971620000100, 'Sigma-Aldrich', 'Ar·bia Saudita', '1970-05-24', 1)
+(97971620000100, 'Sigma-Aldrich', 'Ar√°bia Saudita', '1970-05-24', 1)
 
 INSERT INTO Suppliers(CNPJ, RazaoSocial, Pais, DataAbertura, IDSituacao) VALUES
 (59755175000151, 'Metallchemie', 'Estados Unidos', '1950-01-29', 1)
@@ -102,7 +102,7 @@ INSERT INTO Medicine(CDB, Nome, ValorVenda, IDSituacao, IDCategoria) VALUES
 INSERT INTO Medicine(CDB, Nome, ValorVenda, IDSituacao, IDCategoria) VALUES
 ('7896004000406', 'Dipirona', 20, 1, 2)
 
--- Inserindo ProduÁ„o
+-- Inserindo Produ√ß√£o
 
 INSERT INTO Produce (CDB, Quantidade) VALUES
 ('7891000055123', 10)
@@ -119,7 +119,7 @@ INSERT INTO Produce (CDB, Quantidade) VALUES
 INSERT INTO Produce (CDB, Quantidade) VALUES
 ('7896004000406', 98)
 
--- Inserindo Item da ProduÁ„o
+-- Inserindo Item da Produ√ß√£o
 
 INSERT INTO ProduceItem (IDProducao, IDIngrediente, QuantidadePrincipio) VALUES
 ( 1, 1, 33)
