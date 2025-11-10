@@ -8,7 +8,7 @@ AS
 BEGIN
 IF EXISTS (SELECT 1 FROM RestrictedCustomers rc JOIN inserted i ON rc.IDCliente = i.IDCliente)
 	BEGIN
-		RAISERROR('VocÍ n„o pode realizar a inserÁ„o de uma venda para um cliente restrito', 1,1)
+		RAISERROR('Voc√™ n√£o pode realizar a inser√ß√£o de uma venda para um cliente restrito', 1,1)
 	END
 ELSE
 	BEGIN
@@ -43,7 +43,7 @@ BEGIN
         HAVING COUNT(*) > 3
     )
     BEGIN
-        RAISERROR('O limite m·ximo de venda È de 3 itens', 16, 1);
+        RAISERROR('O limite m√°ximo de venda √© de 3 itens', 16, 1);
         ROLLBACK TRANSACTION;
         RETURN;
     END;
@@ -56,7 +56,7 @@ INSTEAD OF INSERT
 AS
 IF EXISTS (SELECT 1 FROM RestrictedSuppliers rs JOIN inserted i ON rs.IDFornecedor = i.IDFornecedor)
 	BEGIN
-		RAISERROR('VocÍ n„o pode realizar a inserÁ„o de uma venda para um cliente restrito', 1,1)
+		RAISERROR('Voc√™ n√£o pode realizar a inser√ß√£o de uma venda para um cliente restrito', 1,1)
 	END
 ELSE
 	BEGIN
@@ -90,7 +90,7 @@ BEGIN
         HAVING COUNT(*) > 3
     )
     BEGIN
-        RAISERROR('O limite m·ximo de compra È de 3 itens', 16, 1);
+        RAISERROR('O limite m√°ximo de compra √© de 3 itens', 16, 1);
         ROLLBACK TRANSACTION;
         RETURN;
     END;
