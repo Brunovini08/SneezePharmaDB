@@ -107,7 +107,7 @@ Category
 - **EXEC** das procedures criadas para validar regras de negócio e geração de relatórios.
 - **SELECT** nas views e consultas para checar os dados inseridos.
 ---
-## :male-technologist: Créditos
+## Créditos:
 **Projeto acadêmico desenvolvido em SQL Server Management Studio (SSMS)**
 :date: Módulo: Banco de Dados Avançado
 :busts_in_silhouette: Equipe: Grupo SneezePharma
