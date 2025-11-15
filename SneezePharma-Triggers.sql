@@ -1,24 +1,25 @@
 USE SneezePharma
 GO
 
-CREATE TRIGGER trg_Sales_Insert
+CREATE OR ALTER TRIGGER trg_Sales_Insert
 on Sales
-INSTEAD OF INSERT
+AFTER INSERT
 AS
 BEGIN
-IF EXISTS (SELECT 1 FROM RestrictedCustomers rc JOIN inserted i ON rc.IDCliente = i.IDCliente)
-	BEGIN
-		RAISERROR('Você não pode realizar a inserção de uma venda para um cliente restrito', 1,1)
-	END
-ELSE
-	BEGIN
-		INSERT INTO Sales (DataVenda, IDCliente, ValorTotal)
-		SELECT DataVenda, IDCliente, ValorTotal FROM inserted
-	END
+ IF EXISTS (
+        SELECT 1
+        FROM RestrictedCustomers rc
+        JOIN inserted i ON rc.IDCliente = i.IDCliente
+    )
+    BEGIN
+        ROLLBACK TRANSACTION;
+
+        THROW 50001, 'Você não pode realizar a inserção de uma venda para um cliente restrito', 1;
+    END
 END
 GO
 
-CREATE TRIGGER trg_SalesItem_Insert
+CREATE OR ALTER TRIGGER trg_SalesItem_Insert
 ON SalesItems
 AFTER INSERT
 AS
@@ -37,35 +38,33 @@ BEGIN
     END;
     IF EXISTS (
         SELECT 1
-        FROM SalesItems si
-        JOIN inserted i ON si.IDVenda = i.IDVenda
-        GROUP BY si.IDVenda
-        HAVING COUNT(*) > 3
+        FROM (
+            SELECT si.IDVenda, COUNT(*) AS total_itens
+            FROM SalesItems si
+            WHERE si.IDVenda IN (SELECT IDVenda FROM inserted)
+            GROUP BY si.IDVenda
+        ) t
+        WHERE t.total_itens > 3
     )
     BEGIN
-        RAISERROR('O limite máximo de venda é de 3 itens', 16, 1);
         ROLLBACK TRANSACTION;
-        RETURN;
+        THROW 50002, 'O limite máximo de itens por venda é 3', 1;
     END;
 END;
 GO
 
-CREATE TRIGGER trg_Pucharse_Insert
+CREATE OR ALTER TRIGGER trg_Pucharse_Insert
 on Purchases
-INSTEAD OF INSERT
+AFTER INSERT
 AS
 IF EXISTS (SELECT 1 FROM RestrictedSuppliers rs JOIN inserted i ON rs.IDFornecedor = i.IDFornecedor)
 	BEGIN
 		RAISERROR('Você não pode realizar a inserção de uma compra para um fornecedor restrito', 1,1)
-	END
-ELSE
-	BEGIN
-		INSERT INTO Purchases(IDFornecedor, ValorTotal)
-		SELECT IDFornecedor, ValorTotal FROM inserted
+        ROLLBACK TRANSACTION
 	END
 GO
 
-CREATE TRIGGER trg_PurchaseItem_Insert
+CREATE OR ALTER TRIGGER trg_PurchaseItem_Insert
 ON PurchaseItem
 AFTER INSERT
 AS
@@ -83,31 +82,29 @@ BEGIN
         RETURN;
     END;
     IF EXISTS (
-        SELECT 1
-        FROM PurchaseItem pui
-        JOIN inserted i ON pui.IDCompra = i.IDCompra
-        GROUP BY pui.IDCompra
-        HAVING COUNT(*) > 3
+       SELECT 1
+        FROM (
+            SELECT pui.IDCompra, COUNT(*) AS total_itens
+            FROM PurchaseItem pui
+            WHERE pui.IDCompra IN (SELECT IDCompra FROM inserted)
+            GROUP BY pui.IDCompra
+        ) t
+        WHERE t.total_itens > 3
     )
     BEGIN
-        RAISERROR('O limite máximo de compra é de 3 itens', 16, 1);
         ROLLBACK TRANSACTION;
-        RETURN;
+        THROW 50002, 'O limite máximo de itens por compra é 3', 1;
     END;
 END;
 GO
 
-CREATE TRIGGER trg_Produce_Insert
+CREATE OR ALTER TRIGGER trg_Produce_Insert
 ON Produce
 AFTER INSERT
 AS
 BEGIN
     SET NOCOUNT ON;
-IF EXISTS (SELECT 1 FROM Medicine me JOIN inserted i ON me.CDB = i.CDB AND me.IDSituacao = 1)
-    BEGIN
-        INSERT INTO Produce(CDB, Quantidade) SELECT CDB, Quantidade FROM inserted
-    END
-ELSE
+IF EXISTS (SELECT 1 FROM Medicine me JOIN inserted i ON me.CDB = i.CDB AND me.IDSituacao <> 1)
     BEGIN
         RAISERROR('O medicamento deve estar ativo', 16, 1)
         ROLLBACK TRANSACTION
@@ -116,18 +113,14 @@ ELSE
 END
 GO
 
-CREATE TRIGGER trg_ProduceItem_Insert
+CREATE OR ALTER TRIGGER trg_ProduceItem_Insert
 ON ProduceItem
 AFTER INSERT
 AS
 BEGIN
     SET NOCOUNT ON;
-IF EXISTS (SELECT 1 FROM Ingredients ing JOIN inserted i ON ing.IDIngrediente = i.IDIngrediente AND ing.IDSituacao = 1)
-    BEGIN
-        INSERT INTO ProduceItem(IDProducao, IDIngrediente, QuantidadePrincipio) SELECT IDProducao, IDIngrediente, QuantidadePrincipio FROM inserted
-    END
-ELSE
-    BEGIN
+    IF EXISTS (SELECT 1 FROM Ingredients ing JOIN inserted i ON ing.IDIngrediente = i.IDIngrediente AND ing.IDSituacao <> 1)
+      BEGIN
         RAISERROR('O ingrediente deve estar ativo', 16, 1)
         ROLLBACK TRANSACTION
         RETURN
@@ -137,7 +130,7 @@ GO
 
 
 
-CREATE TRIGGER trg_SalesItems_TotalItem
+CREATE OR ALTER TRIGGER trg_SalesItems_TotalItem
 ON SalesItems
 AFTER INSERT
 AS
@@ -153,7 +146,7 @@ BEGIN
 END
 GO
 
-CREATE TRIGGER trg_PurchaseItem_TotalItem
+CREATE OR ALTER TRIGGER trg_PurchaseItem_TotalItem
 ON PurchaseItem
 AFTER INSERT
 AS
@@ -168,7 +161,7 @@ BEGIN
 END
 GO
 
-CREATE TRIGGER trg_SalesItems_Sales
+CREATE OR ALTER TRIGGER trg_SalesItems_Sales
 ON SalesItems
 AFTER INSERT
 AS
@@ -187,7 +180,7 @@ BEGIN
 END;
 GO
 
-CREATE TRIGGER trg_PurchaseItem_Purchases
+CREATE OR ALTER TRIGGER trg_PurchaseItem_Purchases
 ON PurchaseItem
 AFTER INSERT
 AS
@@ -206,7 +199,7 @@ BEGIN
 END;
 GO
 
-CREATE TRIGGER trg_SalesItems_Customers_Medicine
+CREATE OR ALTER TRIGGER trg_SalesItems_Customers_Medicine
 ON SalesItems
 AFTER INSERT
 AS
@@ -229,7 +222,7 @@ GO
 
 
 
-CREATE TRIGGER trg_Purchases_Suppliers_Ingredients
+CREATE OR ALTER  TRIGGER trg_Purchases_Suppliers_Ingredients
 ON PurchaseItem
 AFTER INSERT
 AS
@@ -250,7 +243,7 @@ BEGIN
 END
 GO
 
-CREATE TRIGGER trg_Verificar_Idade
+CREATE OR ALTER TRIGGER trg_Verificar_Idade
 ON Sales
 AFTER INSERT
 AS
@@ -274,7 +267,7 @@ BEGIN
 END;
 GO
 
-CREATE TRIGGER trg_Verificar_Idade_Fornecedor
+CREATE OR ALTER TRIGGER trg_Verificar_Idade_Fornecedor
 ON Purchases
 AFTER INSERT
 AS
