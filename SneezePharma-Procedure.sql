@@ -14,7 +14,7 @@ BEGIN
     INSTEAD OF DELETE
     AS
     BEGIN
-        RAISERROR (''Não é permitido excluir registros da tabela ' + @NomeTabela + '.'' , 16, 1);
+        RAISERROR (''NÃ£o Ã© permitido excluir registros da tabela ' + @NomeTabela + '.'' , 16, 1);
     END;
     ';
 

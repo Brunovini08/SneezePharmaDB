@@ -89,7 +89,7 @@ GROUP BY s.RazaoSocial, s.CNPJ, s.Pais
 ORDER BY ValorTotalComprado DESC;
 
 
--- Listar Produções - Medicamentos
+-- Listar ProduÃ§Ãµes - Medicamentos
 
 SELECT 
     me.Nome, 
@@ -100,7 +100,7 @@ GROUP BY me.Nome
 ORDER BY QuantidadeTotalProduzida DESC;
 
 
--- Listar Quantidade Total de Produções - Medicamentos
+-- Listar Quantidade Total de ProduÃ§Ãµes - Medicamentos
 
 SELECT me.Nome, SUM(p.Quantidade) AS QuantidadeTotalProduzida FROM Produce p
 INNER JOIN Medicine me
@@ -139,7 +139,7 @@ GROUP BY s.RazaoSocial, s.Pais
 ORDER BY TotalFornecido DESC;
 
 
--- Relatório de Medicamentos mais vendidos
+-- RelatÃ³rio de Medicamentos mais vendidos
 
 SELECT 
     me.Nome AS Produto,
@@ -153,7 +153,7 @@ GROUP BY me.Nome, me.ValorVenda
 ORDER BY QuantidadeVendidaTotal DESC;
 
 
--- Relatório de vendas por Período
+-- RelatÃ³rio de vendas por PerÃ­odo
 
 SELECT 
     c.Nome,
@@ -164,4 +164,3 @@ INNER JOIN Sales s ON c.IDCliente = s.IDCliente
 WHERE s.DataVenda BETWEEN '2025-01-01' AND '2025-12-31'
 GROUP BY c.Nome
 ORDER BY TotalVendido DESC;
-
